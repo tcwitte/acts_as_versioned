@@ -255,6 +255,12 @@ module ActiveRecord #:nodoc:
                                    :foreign_key => versioned_foreign_key
         versioned_class.send :include, options[:extend] if options[:extend].is_a?(Module)
         versioned_class.sequence_name = version_sequence_name if version_sequence_name
+
+        # Preserve serialized attributes. Only works if acts_as_versioned is
+        # invoked after "serialize" statements!
+        self.serialized_attributes.each do |key, value|
+          versioned_class.serialize key, value
+        end
       end
 
       module Behaviors
